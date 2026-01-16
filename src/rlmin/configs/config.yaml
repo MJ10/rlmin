@@ -1,0 +1,17 @@
+defaults:
+  - rollout: default
+  - training: default
+  - model: default
+  - reward: verifiable
+  - buffer: default
+  - gpus: collocated
+  - lora: disabled
+  - wandb: default
+  - _self_
+
+data:
+  prompts_path: data/prompts.jsonl
+
+hydra:
+  run:
+    dir: .

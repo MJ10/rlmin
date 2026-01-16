@@ -1,0 +1,10 @@
+type: llm
+model: gpt2
+prompt_template: |
+  You are a reward model. Score the response from 0.0 to 1.0.
+  Prompt: {prompt}
+  Response: {response}
+  Score:
+max_tokens: 4
+tensor_parallel_size: 1
+gpu_memory_utilization: 0.9

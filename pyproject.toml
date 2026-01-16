@@ -1,0 +1,27 @@
+[project]
+name = "llm-rl-minimal"
+version = "0.1.0"
+description = "Minimal RL training loop for LLMs with async vLLM rollouts"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "hydra-core>=1.3",
+  "numpy>=1.26",
+  "peft>=0.11",
+  "torch>=2.2",
+  "transformers>=4.40",
+  "vllm>=0.5.0",
+  "wandb>=0.16",
+]
+
+[project.scripts]
+rlmin-launcher = "rlmin.launcher:main"
+rlmin-rollout = "rlmin.rollout_worker:main"
+rlmin-train = "rlmin.trainer:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]

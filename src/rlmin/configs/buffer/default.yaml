@@ -1,0 +1,2 @@
+dir: runs/buffer
+poll_interval_s: 1.0

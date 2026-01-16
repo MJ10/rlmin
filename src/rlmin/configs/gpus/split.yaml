@@ -1,0 +1,3 @@
+mode: split
+gen_gpus: [0]
+train_gpus: [1]
