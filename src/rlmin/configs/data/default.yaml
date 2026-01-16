@@ -1,0 +1,8 @@
+source: jsonl
+prompts_path: data/prompts.jsonl
+prompt_field: prompt
+answer_field: answer
+dataset_name: ""
+dataset_split: ""
+dataset_revision: null
+cache_dir: null

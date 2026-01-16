@@ -14,6 +14,7 @@ from torch.nn.parallel import DistributedDataParallel as DDP
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from rlmin.buffer import BufferReader
+from rlmin.dataset import load_prompts_from_cfg
 
 
 @dataclass
@@ -62,6 +63,10 @@ def build_model(cfg: DictConfig, device: torch.device) -> tuple[torch.nn.Module,
     return model, tokenizer
 
 
+def unwrap_model(model: torch.nn.Module) -> torch.nn.Module:
+    return model.module if isinstance(model, DDP) else model
+
+
 def compute_logprob(
     model: torch.nn.Module,
     tokenizer: AutoTokenizer,
@@ -85,6 +90,41 @@ def compute_logprob(
     token_count = (labels != -100).sum().clamp(min=1)
     logprob = -loss * token_count
     return logprob
+
+
+def run_eval(cfg: DictConfig, model: torch.nn.Module, tokenizer: AutoTokenizer, device: torch.device) -> dict:
+    dataset = load_prompts_from_cfg(cfg.eval)
+    if cfg.eval.max_samples:
+        dataset = dataset[: cfg.eval.max_samples]
+
+    generator = unwrap_model(model)
+    generator.eval()
+    total = 0
+    correct = 0
+
+    for i in range(0, len(dataset), cfg.eval.batch_size):
+        batch = dataset[i : i + cfg.eval.batch_size]
+        prompts = [item.prompt for item in batch]
+        answers = [item.answer for item in batch]
+        enc = tokenizer(prompts, return_tensors=\"pt\", padding=True, truncation=True).to(device)
+        with torch.no_grad():
+            outputs = generator.generate(
+                **enc,
+                max_new_tokens=cfg.eval.max_new_tokens,
+                temperature=cfg.eval.temperature,
+            )
+        decoded = tokenizer.batch_decode(outputs, skip_special_tokens=True)
+        responses = [text[len(prompt) :] for text, prompt in zip(decoded, prompts)]
+
+        for response, answer in zip(responses, answers):
+            if answer is None:
+                continue
+            total += 1
+            if response.strip() == answer.strip():
+                correct += 1
+
+    accuracy = correct / total if total else 0.0
+    return {\"eval/accuracy\": accuracy, \"eval/total\": total}
 
 
 @hydra.main(config_path="configs", config_name="config", version_base=None)
@@ -123,6 +163,14 @@ def main(cfg: DictConfig) -> None:
             import wandb
 
             wandb.log({"loss": loss.item(), "reward": reward, "step": state.step})
+
+        if cfg.eval.enabled and is_main_process() and state.step % cfg.eval.every_steps == 0:
+            metrics = run_eval(cfg, model, tokenizer, device)
+            if cfg.wandb.enabled:
+                import wandb
+
+                wandb.log({**metrics, "step": state.step})
+            print(json.dumps({"step": state.step, **metrics}))
 
         if is_main_process() and state.step % cfg.training.print_every == 0:
             print(json.dumps({"step": state.step, "loss": loss.item(), "reward": reward}))

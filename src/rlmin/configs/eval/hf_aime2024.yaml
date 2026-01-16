@@ -1,0 +1,14 @@
+enabled: true
+source: hf
+dataset_name: HuggingFaceH4/AIME_2024
+dataset_split: test
+dataset_revision: main
+prompt_field: problem
+answer_field: answer
+cache_dir: null
+prompts_path: ""
+max_samples: 200
+batch_size: 4
+max_new_tokens: 128
+temperature: 0.0
+every_steps: 200

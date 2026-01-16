@@ -1,0 +1,8 @@
+source: hf
+dataset_name: HuggingFaceH4/MATH-500
+dataset_split: test
+dataset_revision: main
+prompt_field: problem
+answer_field: answer
+cache_dir: null
+prompts_path: ""

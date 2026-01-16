@@ -1,0 +1,14 @@
+enabled: true
+source: jsonl
+prompts_path: data/aime24.jsonl
+prompt_field: question
+answer_field: answer
+dataset_name: ""
+dataset_split: ""
+dataset_revision: null
+cache_dir: null
+max_samples: 200
+batch_size: 4
+max_new_tokens: 128
+temperature: 0.0
+every_steps: 200

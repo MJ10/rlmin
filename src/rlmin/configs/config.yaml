@@ -1,4 +1,5 @@
 defaults:
+  - data: default
   - rollout: default
   - training: default
   - model: default
@@ -7,10 +8,8 @@ defaults:
   - gpus: collocated
   - lora: disabled
   - wandb: default
+  - eval: default
   - _self_
-
-data:
-  prompts_path: data/prompts.jsonl
 
 hydra:
   run:

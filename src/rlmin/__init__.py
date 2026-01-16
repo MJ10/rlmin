@@ -1,1 +1,1 @@
-__all__ = ["buffer", "launcher", "rollout_worker", "trainer", "rewards"]
+__all__ = ["buffer", "launcher", "rollout_worker", "trainer", "rewards", "dataset"]
