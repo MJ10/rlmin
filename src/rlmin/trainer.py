@@ -124,7 +124,7 @@ def run_eval(cfg: DictConfig, model: torch.nn.Module, tokenizer: AutoTokenizer, 
                 correct += 1
 
     accuracy = correct / total if total else 0.0
-    return {\"eval/accuracy\": accuracy, \"eval/total\": total}
+    return {"eval/accuracy": accuracy, "eval/total": total}
 
 
 @hydra.main(config_path="configs", config_name="config", version_base=None)
