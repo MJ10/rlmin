@@ -106,7 +106,7 @@ def run_eval(cfg: DictConfig, model: torch.nn.Module, tokenizer: AutoTokenizer, 
         batch = dataset[i : i + cfg.eval.batch_size]
         prompts = [item.prompt for item in batch]
         answers = [item.answer for item in batch]
-        enc = tokenizer(prompts, return_tensors=\"pt\", padding=True, truncation=True).to(device)
+        enc = tokenizer(prompts, return_tensors="pt", padding=True, truncation=True).to(device)
         with torch.no_grad():
             outputs = generator.generate(
                 **enc,
